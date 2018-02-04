@@ -1,6 +1,7 @@
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install --upgrade pip
+pip install --upgrade -r requirements.txt
 source .env
 export $(cat .env)
 ./api/manage.py migrate
