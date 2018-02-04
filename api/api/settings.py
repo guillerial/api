@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.core.exceptions import ImproperlyConfigured
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -42,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'api.middleware.SQLAlchemySessionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,6 +83,19 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+try:
+    LEGACY_DATABASE_URL         = os.environ['LEGACY_DATABASE_URL']
+
+except KeyError:
+    raise ImproperlyConfigured('Must define env variables')
+
+# MYSQL SETTINGS
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+LEGACY_ENGINE = create_engine(LEGACY_DATABASE_URL)
+LEGACY_SESSION = scoped_session(sessionmaker(bind=LEGACY_ENGINE))
 
 
 # Password validation

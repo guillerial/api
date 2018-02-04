@@ -1,13 +1,18 @@
 # API 
 
 Instrucciones de instalación de un venv:
-<pre> python3 -m venv .venv </pre>
+```bash
+python3 -m venv .venv
+```
 
 Esto creará el directorio .venv
 
 Utilizar la API:
-<pre>
+```bash
 source .venv/bin/activate
-./api/api/manage.py migrations
-./api/api/manage.py runserver
-</pre>
+pip install -r requirements.txt
+source .env
+export $(cat .env)
+./api/manage.py migrate
+./api/manage.py runserver 0.0.0.0:8000
+```
