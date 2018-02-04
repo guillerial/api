@@ -28,7 +28,6 @@ class HelloWorldView(APIView):
 
     def get(self, request):
         session = request.db_session
-        print(session.query())
 
         return Response()
 
