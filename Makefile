@@ -12,6 +12,9 @@ migrate: .env .venv
 	cd api && $(PYTHON) ./manage.py makemigrations
 	cd api && $(PYTHON) ./manage.py migrate
 
+inspectdb: .env .venv migrate
+	cd api && $(PYTHON) ./manage.py inspectdb
+
 .venv: .venv/bin/activate
 
 .venv/bin/activate: requirements.txt
