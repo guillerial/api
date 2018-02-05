@@ -2,7 +2,7 @@
 
 Instrucciones de uso:
 ```bash
-./init.sh
+make runserver
 ```
 
 Necesario instalar: 
