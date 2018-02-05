@@ -27,7 +27,6 @@ index = IndexView.as_view()
 class HelloWorldView(APIView):
 
     def get(self, request):
-        session = request.db_session
 
         return Response()
 
