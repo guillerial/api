@@ -44,13 +44,15 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'api.middleware.SQLAlchemySessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Uncomment to use SQLAlchemy
+    #'api.middleware.SQLAlchemySessionMiddleware',
 ]
 
 ROOT_URLCONF = 'api.urls'
@@ -73,24 +75,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
+try:
+    LEGACY_DATABASE_URL         = os.environ['LEGACY_DATABASE_URL']
+    DATABASE_NAME         = os.environ['DATABASE_NAME']
+    DATABASE_USER         = os.environ['DATABASE_USER']
+    DATABASE_PASSWORD         = os.environ['DATABASE_PASSWORD']
+    DATABASE_HOST         = os.environ['DATABASE_HOST']
+    DATABASE_PORT         = os.environ['DATABASE_PORT']
+
+except KeyError:
+    raise ImproperlyConfigured('Must define env variables')
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': DATABASE_PORT,
     }
 }
 
-try:
-    LEGACY_DATABASE_URL         = os.environ['LEGACY_DATABASE_URL']
 
-except KeyError:
-    raise ImproperlyConfigured('Must define env variables')
-
-# MYSQL SETTINGS
+# SQLALCHEMY SETTINGS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 

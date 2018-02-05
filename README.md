@@ -16,3 +16,10 @@ export $(cat .env)
 ./api/manage.py migrate
 ./api/manage.py runserver 0.0.0.0:8000
 ```
+
+Necesario instalar: 
+	Para MYSQL:
+```
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install python-mysqldb
+```
