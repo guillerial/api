@@ -21,5 +21,5 @@ import legacy.views
 urlpatterns = [
     path('', legacy.views.index, name='Índice'),
     path('admin/', admin.site.urls, name='admin'),
-    path('hw/', legacy.views.hello_world, name='Hello World'),
+    path('register/', legacy.views.user_register, name='register'),
 ]
