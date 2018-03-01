@@ -22,4 +22,5 @@ urlpatterns = [
     path('', legacy.views.index, name='Índice'),
     path('admin/', admin.site.urls, name='admin'),
     path('register/', legacy.views.user_register, name='register'),
+    path('login/', legacy.views.user_login, name='login'),
 ]

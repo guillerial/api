@@ -1,4 +1,4 @@
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 
 # Create your models here.
@@ -27,7 +27,8 @@ class Student(User):
 
         return cls(name=name, email=email, password=hashed_password)
 
-
+    def check_password(self,plain_password):
+        return check_password(plain_password, self.password)
 
 
 class Teacher(User):
