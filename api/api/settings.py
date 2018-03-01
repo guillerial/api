@@ -83,10 +83,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'api.wsgi.application'
 
 try:
-    LEGACY_DATABASE_URL         = os.environ['LEGACY_DATABASE_URL']
+    LEGACY_DATABASE_URL   = os.environ['LEGACY_DATABASE_URL']
     DATABASE_NAME         = os.environ['DATABASE_NAME']
     DATABASE_USER         = os.environ['DATABASE_USER']
-    DATABASE_PASSWORD         = os.environ['DATABASE_PASSWORD']
+    DATABASE_PASSWORD     = os.environ['DATABASE_PASSWORD']
     DATABASE_HOST         = os.environ['DATABASE_HOST']
     DATABASE_PORT         = os.environ['DATABASE_PORT']
 

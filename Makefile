@@ -12,6 +12,9 @@ migrate: .env .venv
 	cd api && $(PYTHON) ./manage.py makemigrations
 	cd api && $(PYTHON) ./manage.py migrate
 
+test: .env .venv migrate
+	cd api && $(PYTHON) ./manage.py test
+
 inspectdb: .env .venv migrate
 	cd api && $(PYTHON) ./manage.py inspectdb
 

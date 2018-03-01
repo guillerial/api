@@ -19,8 +19,9 @@ from django.contrib import admin
 import legacy.views
 
 urlpatterns = [
-    path('', legacy.views.index, name='Índice'),
+    path('', legacy.views.index, name='index'),
     path('admin/', admin.site.urls, name='admin'),
     path('register/', legacy.views.user_register, name='register'),
     path('login/', legacy.views.user_login, name='login'),
+    path('profile/', legacy.views.user_profile, name='profile'),
 ]
