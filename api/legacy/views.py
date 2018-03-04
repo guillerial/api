@@ -2,12 +2,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Student
+from .models import Student, Group
 from . import serializers
 
 # Create your views here.
@@ -57,8 +57,9 @@ class RegisterView(APIView):
                             status=status.HTTP_403_FORBIDDEN)
 
         token, create = Token.objects.get_or_create(user=django_user)
-        json = serializer.data
+        json = dict(serializer.data)
         json['token'] = token.key
+        del json['password']
         return Response(json, status=status.HTTP_201_CREATED)
 
 
@@ -93,3 +94,22 @@ class LoginView(APIView):
 
 
 user_login = LoginView.as_view()
+
+
+class ProfileView(APIView):
+    """
+    Return user's profile data.
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        try:
+            user = Student.objects.get(email=request.user.username)
+            return Response(data=serializers.ProfileSerializer(instance=user).data, status=status.HTTP_200_OK)
+        except Student.DoesNotExist:
+            return  Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(data={"user": request.user.username}, status=status.HTTP_200_OK)
+
+user_profile = ProfileView.as_view()

@@ -22,8 +22,8 @@ class AccountsTest(APITestCase):
         Ensure we can create a new user and a valid token is created with it.
         """
         data = {
-            'username': 'guillermorial',
-            'email': 'guillermorial@imasdetres.com',
+            'name': 'guillermorial',
+            'email': 'guillermorial2@imasdetres.com',
             'password': 'abcdefghijk'
         }
 
@@ -34,6 +34,6 @@ class AccountsTest(APITestCase):
         # And that we're returning a 201 created code.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # Additionally, we want to return the username and email upon successful creation.
-        self.assertEqual(response.data['username'], data['username'])
+        self.assertEqual(response.data['name'], data['name'])
         self.assertEqual(response.data['email'], data['email'])
         self.assertFalse('password' in response.data)
