@@ -53,6 +53,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('name', 'email', 'groups')
 
     def get_groups(self, obj):
-        "obj is a Student instance. Returns list of dicts"""
-        qset = Group.objects.filter(students__id=obj.id)
-        return [GroupSerializer(m).data for m in qset]
+        """obj is a Student instance. Returns list of dicts"""
+        groups = Group.objects.filter(students__id=obj.id)
+        return [GroupSerializer(group).data for group in groups]
