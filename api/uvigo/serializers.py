@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from legacy.models import Student, Group, Subject, Teacher, Classroom
+from uvigo.models import Student, Group, Subject, Teacher, Classroom
 
 
 class RegisterSerializer(serializers.Serializer):
