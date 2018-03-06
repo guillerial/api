@@ -16,12 +16,12 @@ Including another URLconf
 from django.urls import path
 from django.contrib import admin
 
-import legacy.views
+import uvigo.views
 
 urlpatterns = [
-    path('', legacy.views.index, name='index'),
+    path('', uvigo.views.index, name='index'),
     path('admin/', admin.site.urls, name='admin'),
-    path('register/', legacy.views.user_register, name='register'),
-    path('login/', legacy.views.user_login, name='login'),
-    path('profile/', legacy.views.user_profile, name='profile'),
+    path('register/', uvigo.views.user_register, name='register'),
+    path('login/', uvigo.views.user_login, name='login'),
+    path('profile/', uvigo.views.user_profile, name='profile'),
 ]
