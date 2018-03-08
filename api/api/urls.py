@@ -24,4 +24,6 @@ urlpatterns = [
     path('register/', uvigo.views.user_register, name='register'),
     path('login/', uvigo.views.user_login, name='login'),
     path('profile/', uvigo.views.user_profile, name='profile'),
+    path('topology/', uvigo.views.topology_data, name='topology'),
+    path('indications/', uvigo.views.indications_data, name='indications'),
 ]
