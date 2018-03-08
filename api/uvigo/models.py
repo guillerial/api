@@ -93,3 +93,20 @@ class Schedule(models.Model):
 
     class Meta:
         db_table = 'schedules'
+
+
+class Topology(models.Model):
+    route = models.CharField(primary_key=True, blank=False, max_length=50)
+    next = models.CharField(blank=False, max_length=25)
+
+    class Meta:
+        db_table = 'topology'
+
+
+class Indications(models.Model):
+    route = models.CharField(primary_key=True, blank=False, max_length=50)
+    indication = models.TextField(blank=False)
+    image_url = models.CharField(blank=False, max_length=250)
+
+    class Meta:
+        db_table = 'indications'

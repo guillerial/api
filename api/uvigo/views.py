@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Student, Group
+from .models import Student, Group, Topology, Indications
 from . import serializers
 
 # Create your views here.
@@ -103,13 +103,40 @@ class ProfileView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-
         try:
             user = Student.objects.get(email=request.user.username)
             return Response(data=serializers.ProfileSerializer(instance=user).data, status=status.HTTP_200_OK)
         except Student.DoesNotExist:
-            return  Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(data={"user": request.user.username}, status=status.HTTP_200_OK)
 
 user_profile = ProfileView.as_view()
+
+
+class TopologyView(APIView):
+    """
+    Returns topology info
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        objs = Topology.objects.all()
+
+        return Response(data=serializers.TopologySerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
+
+topology_data = TopologyView.as_view()
+
+
+class IndicationsView(APIView):
+    """
+    Returns indications
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        objs = Indications.objects.all()
+
+        return  Response(data=serializers.IndicationSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
+indications_data = IndicationsView.as_view()
