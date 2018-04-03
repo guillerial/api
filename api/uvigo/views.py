@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Student, Group, Topology, Indications
+from .models import Student, Group, Topology, Indications, Classroom
 from . import serializers
 
 # Create your views here.
@@ -140,3 +140,16 @@ class IndicationsView(APIView):
         return  Response(data=serializers.IndicationSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
 
 indications_data = IndicationsView.as_view()
+
+class ClassroomsView(APIView):
+    """
+    Returns indications
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        objs = Classroom.objects.all()
+
+        return  Response(data=serializers.ClassroomSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
+classrooms = ClassroomsView.as_view()

@@ -68,3 +68,8 @@ class IndicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Indications
+
+class ClassroomSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Classroom
