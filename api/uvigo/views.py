@@ -143,7 +143,7 @@ indications_data = IndicationsView.as_view()
 
 class ClassroomsView(APIView):
     """
-    Returns indications
+    Returns classrooms
     """
     permission_classes = (AllowAny,)
 
