@@ -61,6 +61,9 @@ class TeachersSubjects(models.Model):
 
 class Classroom(models.Model):
     name = models.CharField(blank=False, max_length=5)
+    nearby_beacon = models.CharField(max_length=20, null=True)
+    last_indication = models.CharField(max_length=255, null=True)
+    last_image = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.name
