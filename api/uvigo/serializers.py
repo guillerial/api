@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from uvigo.models import Student, Group, Subject, Teacher, Classroom, Topology, Indications
+from uvigo.models import Student, Group, Teacher, Classroom, Topology, Indications
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -12,13 +12,6 @@ class RegisterSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
-
-
-class SubjectSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Subject
-        fields = ('name', 'code', 'year')
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -36,13 +29,12 @@ class ClassroomSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    subject = SubjectSerializer()
     teacher = TeacherSerializer()
     classroom = ClassroomSerializer()
 
     class Meta:
         model = Group
-        fields = ('number', 'subject', 'teacher', 'classroom')
+        fields = ('number', 'subject_name', 'teacher', 'classroom')
 
 
 class ProfileSerializer(serializers.ModelSerializer):
