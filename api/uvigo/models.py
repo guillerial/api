@@ -47,7 +47,7 @@ class Classroom(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
+    class Meta: 
         db_table = 'classrooms'
 
 
