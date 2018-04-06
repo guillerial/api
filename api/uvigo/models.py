@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 
 
-# Create your models here.
+# Create your models hereee.
 
 
 class User(models.Model):
@@ -47,7 +47,7 @@ class Classroom(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta: 
+    class Meta:
         db_table = 'classrooms'
 
 
