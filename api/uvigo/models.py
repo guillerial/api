@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 
 
-# Create your models hereee.
+# Create your models here.
 
 
 class User(models.Model):
@@ -54,7 +54,7 @@ class Classroom(models.Model):
 class Group(models.Model):
     code = models.CharField(max_length=20, primary_key=True)
     subject_name = models.CharField(max_length=20)
-    number = models.IntegerField()
+    number = models.IntegerField(default=None, blank=True, null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True, default=None)
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, default=None)
     students = models.ManyToManyField(Student)
@@ -69,10 +69,10 @@ class Group(models.Model):
 class Schedule(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     day = models.IntegerField(blank=False)
-    start_hour = models.IntegerField(blank=False)
-    finish_hour = models.IntegerField(blank=False)
-    start_date = models.DateField()
-    finish_date = models.DateField()
+    start_hour = models.IntegerField(blank=True)
+    finish_hour = models.IntegerField(blank=True)
+    start_date = models.DateField(default=None, blank=True, null=True)
+    finish_date = models.DateField(default=None, blank=True, null=True)
 
     class Meta:
         db_table = 'schedules'
