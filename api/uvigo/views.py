@@ -190,7 +190,7 @@ class SchedulesView(APIView):
     def get(self, request):
         user = Student.objects.get(email=request.user.username)
 
-        objs = Schedule.objects.filter(group__students__contains=user)
+        objs = Schedule.objects.filter(group__students__in=user)
 
         return Response(data=serializers.ScheduleSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
 
