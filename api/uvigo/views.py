@@ -188,7 +188,9 @@ class SchedulesView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        objs = Schedule.objects.all()
+        user = Student.objects.get(email=request.user.username)
+
+        objs = Schedule.objects.filter(group__students__contains=user)
 
         return Response(data=serializers.ScheduleSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
 
