@@ -27,4 +27,6 @@ urlpatterns = [
     path('topology/', uvigo.views.topology_data, name='topology'),
     path('indications/', uvigo.views.indications_data, name='indications'),
     path('classrooms/', uvigo.views.classrooms, name='classrooms'),
+    path('schedules/', uvigo.views.schedules, name='schedules'),
+    path('teachers/', uvigo.views.teachers, name='teachers'),
 ]

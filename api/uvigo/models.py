@@ -27,6 +27,13 @@ class Student(User):
 
         return cls(name=name, email=email, password=hashed_password)
 
+    def assign_email_and_password(self, email, password):
+        hashed_password = make_password(password, salt='markn', hasher='md5')
+        self.email = email
+        self.password = hashed_password
+
+        return self
+
     def check_password(self, plain_password):
         return check_password(plain_password, self.password)
 
@@ -93,3 +100,13 @@ class Indications(models.Model):
 
     class Meta:
         db_table = 'indications'
+
+
+class TeacherSchedule(models.Model):
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    day = models.IntegerField(blank=False)
+    start_hour = models.IntegerField(blank=True)
+    finish_hour = models.IntegerField(blank=True)
+
+    class Meta:
+        db_table = 'teacher_schedules'

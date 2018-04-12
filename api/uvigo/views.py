@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Student, Group, Topology, Indications, Classroom
+from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule
 from . import serializers
 
 # Create your views here.
@@ -45,10 +45,18 @@ class RegisterView(APIView):
             return Response(data={"detail": "User already exist"},
                             status=status.HTTP_403_FORBIDDEN)
         except Student.DoesNotExist:
-            student = Student.create_new_student(name=serializer.data['name'],
-                                                 email=serializer.data['email'],
-                                                 password=serializer.data['password'])
-            student.save()
+            try:
+                student = Student.objects.get(name=serializer.data['name'])
+                student.assign_email_and_password(email=serializer.data['email'],
+                                                     password=serializer.data['password'])
+                student.save()
+                print("asd")
+            except Student.DoesNotExist:
+                student = Student.create_new_student(name=serializer.data['name'],
+                                                     email=serializer.data['email'],
+                                                     password=serializer.data['password'])
+                student.save()
+                print("asdf")
 
         django_user, created = User.objects.get_or_create(username=serializer.data['email'])
 
@@ -139,7 +147,9 @@ class IndicationsView(APIView):
 
         return  Response(data=serializers.IndicationSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
 
+
 indications_data = IndicationsView.as_view()
+
 
 class ClassroomsView(APIView):
     """
@@ -150,6 +160,37 @@ class ClassroomsView(APIView):
     def get(self, request):
         objs = Classroom.objects.all()
 
-        return  Response(data=serializers.ClassroomSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+        return  Response(data=serializers.FullClassroomSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
 
 classrooms = ClassroomsView.as_view()
+
+
+class TeachersView(APIView):
+    """
+    Returns teachers
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        objs = Teacher.objects.all()
+
+        return Response(data=serializers.TeacherSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
+
+teachers = TeachersView.as_view()
+
+
+class SchedulesView(APIView):
+    """
+    Returns schedules
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        objs = Schedule.objects.all()
+
+        return Response(data=serializers.ScheduleSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
+
+schedules = SchedulesView.as_view()
