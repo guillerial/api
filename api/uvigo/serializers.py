@@ -5,14 +5,14 @@ from uvigo.models import Student, Group, Teacher, Classroom, Topology, Indicatio
 
 
 class RegisterSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email = serializers.CharField()
     name = serializers.CharField()
     password = serializers.CharField()
     office = serializers.CharField(required=False)
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email = serializers.CharField()
     password = serializers.CharField()
 
 
@@ -27,11 +27,11 @@ class UserByTypeSerializer(serializers.Serializer):
 
 
 class EmailSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=False)
+    email = serializers.CharField(required=False)
 
 
 class GroupViewSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=False)
+    email = serializers.CharField(required=False)
     subject = serializers.CharField(required=False)
 
 
