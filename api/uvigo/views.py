@@ -362,7 +362,7 @@ class GroupsView(APIView):
         if serializer.is_valid(raise_exception=True):
             if user_type == UvigoUser.ADMIN:
 
-                if serializer.data['email'] in serializer.data.keys():
+                if 'email' in serializer.data.keys():
                     request_user, request_user_type = Utils.check_user_and_type(serializer.data['email'])
                     if request_user_type == UvigoUser.TEACHER:
                         return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=request_user.id), many=True),
@@ -372,7 +372,7 @@ class GroupsView(APIView):
                                         status=status.HTTP_200_OK)
                     return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
 
-                elif serializer.data['subject'] in serializer.data.keys():
+                elif 'subject' in serializer.data.keys():
                     groups = Group.objects.filter(subject_name=serializer.data['subject'])
                     if groups:
                         return Response(
