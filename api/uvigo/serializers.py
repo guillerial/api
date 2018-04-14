@@ -17,6 +17,7 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     name = serializers.CharField()
     email = serializers.CharField()
 
@@ -70,7 +71,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Teacher
-        fields = ('name', 'email', 'office', 'schedules')
+        fields = ('id', 'name', 'email', 'office', 'schedules')
 
     def get_schedules(self, obj):
         """obj is a Teacher instance. Returns list of dicts"""
@@ -82,7 +83,7 @@ class ClassroomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Classroom
-        fields = ('name',)
+        fields = ('id', 'name',)
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -99,7 +100,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('name', 'email', 'groups')
+        fields = ('id', 'name', 'email', 'groups')
 
     def get_groups(self, obj):
         """obj is a Student instance. Returns list of dicts"""
@@ -133,4 +134,4 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Schedule
-        fields = ('day', 'start_hour', 'finish_hour', 'group')
+        fields = ('id', 'day', 'start_hour', 'finish_hour', 'group')
