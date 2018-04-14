@@ -364,10 +364,10 @@ class GroupsView(APIView):
 
                 if 'id' in serializer.validated_data.keys():
                     if serializer.validated_data['type'] == UvigoUser.TEACHER:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']), many=True),
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']).data, many=True),
                                         status=status.HTTP_200_OK)
                     if serializer.validated_data['type'] == UvigoUser.STUDENT:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']), many=True),
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']).data, many=True),
                                         status=status.HTTP_200_OK)
                     return Response(data={"detail": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -376,7 +376,7 @@ class GroupsView(APIView):
                     if groups:
                         return Response(
                             serializers.GroupSerializer(instance=groups,
-                                                        many=True),
+                                                        many=True).data,
                             status=status.HTTP_200_OK)
                 else:
                     return Response(data={"detail": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
@@ -394,10 +394,12 @@ class GroupsView(APIView):
         if serializer.is_valid(raise_exception=True):
             group = Group.objects.get(serializer.data['code'])
             serializer.update(group, serializer.validated_data)
+            return Response(status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = serializers.ModifyGroupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.create(serializer.validated_data)
+            return Response(status=status.HTTP_201_CREATED)
 
 groups = GroupsView.as_view()
