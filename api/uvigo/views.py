@@ -362,17 +362,17 @@ class GroupsView(APIView):
         if serializer.is_valid(raise_exception=True):
             if user_type == UvigoUser.ADMIN:
 
-                if 'id' in request.GET.keys():
-                    if request.GET['type'] == UvigoUser.TEACHER:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=request.GET['id']), many=True),
+                if 'id' in serializer.validated_data.keys():
+                    if serializer.validated_data['type'] == UvigoUser.TEACHER:
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']), many=True),
                                         status=status.HTTP_200_OK)
-                    if request.GET['type'] == UvigoUser.STUDENT:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=request.GET['id']), many=True),
+                    if serializer.validated_data['type'] == UvigoUser.STUDENT:
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']), many=True),
                                         status=status.HTTP_200_OK)
                     return Response(data={"detail": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
-                elif 'subject' in request.GET.keys():
-                    groups = Group.objects.filter(subject_name=request.GET['subject'])
+                elif 'subject' in serializer.validated_data.keys():
+                    groups = Group.objects.filter(subject_name=serializer.validated_data['subject'])
                     if groups:
                         return Response(
                             serializers.GroupSerializer(instance=groups,
