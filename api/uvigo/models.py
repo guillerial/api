@@ -16,6 +16,9 @@ class UvigoUser(models.Model):
     class Meta:
         abstract = True
 
+    def check_password(self, plain_password):
+        return check_password(plain_password, self.password)
+
 
 class Student(UvigoUser):
     class Meta:
@@ -34,9 +37,6 @@ class Student(UvigoUser):
 
         return self
 
-    def check_password(self, plain_password):
-        return check_password(plain_password, self.password)
-
 
 class Teacher(UvigoUser):
     office = models.CharField(max_length=5)
@@ -44,11 +44,23 @@ class Teacher(UvigoUser):
     class Meta:
         db_table = 'teachers'
 
+    @classmethod
+    def create_new_teacher(cls, name, email, password):
+        hashed_password = make_password(password, salt='markn', hasher='md5')
+
+        return cls(name=name, email=email, password=hashed_password)
+
 
 class Admin(UvigoUser):
 
     class Meta:
         db_table = 'admins'
+
+    @classmethod
+    def create_new_admin(cls, name, email, password):
+        hashed_password = make_password(password, salt='markn', hasher='md5')
+
+        return cls(name=name, email=email, password=hashed_password)
 
 
 class Classroom(models.Model):

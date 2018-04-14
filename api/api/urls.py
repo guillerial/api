@@ -21,7 +21,7 @@ import uvigo.views
 urlpatterns = [
     path('', uvigo.views.index, name='index'),
     path('admin/', admin.site.urls, name='admin'),
-    path('register/', uvigo.views.user_register, name='register'),
+    path('register/', uvigo.views.student_register, name='register'),
     path('login/', uvigo.views.user_login, name='login'),
     path('profile/', uvigo.views.user_profile, name='profile'),
     path('topology/', uvigo.views.topology_data, name='topology'),
@@ -29,4 +29,6 @@ urlpatterns = [
     path('classrooms/', uvigo.views.classrooms, name='classrooms'),
     path('schedules/', uvigo.views.schedules, name='schedules'),
     path('teachers/', uvigo.views.teachers, name='teachers'),
+    path('teachers/register/', uvigo.views.teacher_register, name='teachers-registration'),
+    path('admins/register/', uvigo.views.admin_register, name='admins-registration'),
 ]

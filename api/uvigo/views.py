@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule
+from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule, Admin
 from . import serializers, permissions
 
 # Create your views here.
@@ -28,9 +28,9 @@ class IndexView(APIView):
 index = IndexView.as_view()
 
 
-class RegisterView(APIView):
+class StudentRegisterView(APIView):
     """
-    Creates the user.
+    Creates a student.
     """
     permission_classes = (AllowAny,)
 
@@ -50,13 +50,11 @@ class RegisterView(APIView):
                 student.assign_email_and_password(email=serializer.data['email'],
                                                      password=serializer.data['password'])
                 student.save()
-                print("asd")
             except Student.DoesNotExist:
                 student = Student.create_new_student(name=serializer.data['name'],
                                                      email=serializer.data['email'],
                                                      password=serializer.data['password'])
                 student.save()
-                print("asdf")
 
         django_user, created = User.objects.get_or_create(username=serializer.data['email'])
 
@@ -71,7 +69,97 @@ class RegisterView(APIView):
         return Response(json, status=status.HTTP_201_CREATED)
 
 
-user_register = RegisterView.as_view()
+student_register = StudentRegisterView.as_view()
+
+
+class TeacherRegisterView(APIView):
+    """
+    Creates a teacher.
+    """
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = serializers.RegisterSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            teacher = Teacher.objects.get(email=serializer.data['email'])
+            return Response(data={"detail": "User already exist"},
+                            status=status.HTTP_403_FORBIDDEN)
+        except Teacher.DoesNotExist:
+            try:
+                teacher = Teacher.objects.get(name=serializer.data['name'])
+                teacher.assign_email_and_password(email=serializer.data['email'],
+                                                     password=serializer.data['password'])
+                teacher.save()
+
+            except Teacher.DoesNotExist:
+                teacher = Teacher.create_new_teacher(name=serializer.data['name'],
+                                                     email=serializer.data['email'],
+                                                     password=serializer.data['password'])
+                teacher.save()
+
+        django_user, created = User.objects.get_or_create(username=serializer.data['email'])
+
+        if django_user is None or not django_user.is_active:
+            return Response(data={"detail": "User don't exist"},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        token, create = Token.objects.get_or_create(user=django_user)
+        json = dict(serializer.data)
+        json['token'] = token.key
+        del json['password']
+        return Response(json, status=status.HTTP_201_CREATED)
+
+
+teacher_register = TeacherRegisterView.as_view()
+
+
+class AdminRegisterView(APIView):
+    """
+    Creates a teacher.
+    """
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = serializers.RegisterSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            admin = Admin.objects.get(email=serializer.data['email'])
+            return Response(data={"detail": "User already exist"},
+                            status=status.HTTP_403_FORBIDDEN)
+        except Admin.DoesNotExist:
+            try:
+                admin = Admin.objects.get(name=serializer.data['name'])
+                admin.assign_email_and_password(email=serializer.data['email'],
+                                                     password=serializer.data['password'])
+                admin.save()
+
+            except Admin.DoesNotExist:
+                admin = Admin.create_new_admin(name=serializer.data['name'],
+                                                     email=serializer.data['email'],
+                                                     password=serializer.data['password'])
+                admin.save()
+
+        django_user, created = User.objects.get_or_create(username=serializer.data['email'])
+
+        if django_user is None or not django_user.is_active:
+            return Response(data={"detail": "User don't exist"},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        token, create = Token.objects.get_or_create(user=django_user)
+        json = dict(serializer.data)
+        json['token'] = token.key
+        del json['password']
+        return Response(json, status=status.HTTP_201_CREATED)
+
+
+admin_register = AdminRegisterView.as_view()
 
 
 class LoginView(APIView):
@@ -97,7 +185,29 @@ class LoginView(APIView):
                 return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
         except Student.DoesNotExist:
-            return Response(data={"detail": "User don't exist"},
+
+            try:
+                user = Teacher.objects.get(email=serializer.data['email'])
+                if user.check_password(serializer.data['password']):
+                    django_user = User.objects.get(username=serializer.data['email'])
+                    token, create = Token.objects.get_or_create(user=django_user)
+                    return Response(data={"token": token.key}, status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
+
+            except Teacher.DoesNotExist:
+
+                try:
+                    user = Admin.objects.get(email=serializer.data['email'])
+                    if user.check_password(serializer.data['password']):
+                        django_user = User.objects.get(username=serializer.data['email'])
+                        token, create = Token.objects.get_or_create(user=django_user)
+                        return Response(data={"token": token.key}, status=status.HTTP_200_OK)
+                    else:
+                        return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
+
+                except Admin.DoesNotExist:
+                    return Response(data={"detail": "User don't exist"},
                             status=status.HTTP_403_FORBIDDEN)
 
 
