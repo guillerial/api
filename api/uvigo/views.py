@@ -7,8 +7,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule, Admin
+from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule, Admin, UvigoUser, TeacherSchedule
 from . import serializers, permissions
+from .utils import Utils
 
 # Create your views here.
 
@@ -303,14 +304,26 @@ class SchedulesView(APIView):
     """
     Returns schedules
     """
-    permission_classes = (IsAuthenticated, permissions.IsStudent)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        user = Student.objects.get(email=request.user.username)
+        user, user_type = Utils.check_user_and_type(request.user.username)
+        if user_type == UvigoUser.STUDENT:
+            user = Student.objects.get(email=request.user.username)
 
-        objs = Schedule.objects.filter(group__students__id=user.id)
+            objs = Schedule.objects.filter(group__students__id=user.id)
 
-        return Response(data=serializers.ScheduleSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+            return Response(data=serializers.ScheduleSerializer(instance=objs, many=True).data, status=status.HTTP_200_OK)
+
+        elif user_type == UvigoUser.TEACHER:
+            user = Teacher.objects.get(email=request.user.username)
+
+            objs = TeacherSchedule.objects.filter(teacher__id=user.id)
+
+            return Response(data=serializers.TeacherScheduleSerializer(instance=objs, many=True).data,
+                            status=status.HTTP_200_OK)
+        else:
+            return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 schedules = SchedulesView.as_view()
@@ -334,3 +347,59 @@ class UsersListView(APIView):
 
 
 users_list = UsersListView.as_view()
+
+
+class GroupsView(APIView):
+    """
+    Returns user groups
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        serializer = serializers.GroupViewSerializer(data=request.GET)
+        user, user_type = Utils.check_user_and_type(request.user.username)
+
+        if serializer.is_valid(raise_exception=True):
+            if user_type == UvigoUser.ADMIN:
+
+                if serializer.data['email'] in serializer.data.keys():
+                    request_user, request_user_type = Utils.check_user_and_type(serializer.data['email'])
+                    if request_user_type == UvigoUser.TEACHER:
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=request_user.id), many=True),
+                                        status=status.HTTP_200_OK)
+                    if request_user_type == UvigoUser.STUDENT:
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=request_user.id), many=True),
+                                        status=status.HTTP_200_OK)
+                    return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+
+                elif serializer.data['subject'] in serializer.data.keys():
+                    groups = Group.objects.filter(subject_name=serializer.data['subject'])
+                    if groups:
+                        return Response(
+                            serializers.GroupSerializer(instance=groups,
+                                                        many=True),
+                            status=status.HTTP_200_OK)
+                else:
+                    return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif user_type == UvigoUser.TEACHER:
+            groups = Group.objects.filter(teacher__id=user.id)
+            return Response(
+                serializers.GroupSerializer(instance=groups,
+                                            many=True),
+                status=status.HTTP_200_OK)
+
+    def put(self, request):
+        serializer = serializers.ModifyGroupSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            group = Group.objects.get(serializer.data['code'])
+            serializer.update(group, serializer.validated_data)
+
+    def post(self, request):
+        serializer = serializers.ModifyGroupSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.create(serializer.validated_data)
+
+groups = GroupsView.as_view()

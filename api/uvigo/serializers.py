@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from uvigo.models import Student, Group, Teacher, Classroom, Topology, Indications, TeacherSchedule, Schedule
 
@@ -24,6 +25,38 @@ class UserByTypeSerializer(serializers.Serializer):
     students = UserSerializer(many=True)
     teachers = UserSerializer(many=True)
 
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=False)
+
+
+class GroupViewSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=False)
+    subject = serializers.CharField(required=False)
+
+
+class ModifyGroupSerializer(serializers.Serializer):
+    code = serializers.CharField()
+    subject_name = serializers.CharField()
+    number = serializers.IntegerField()
+    teacher = serializers.IntegerField(required=False)
+    classroom = serializers.IntegerField(required=False)
+
+    def update(self, instance, validated_data):
+        instance.subject_name = validated_data['subject_name']
+        instance.number = validated_data['number']
+        instance.teacher = validated_data['teacher']
+        instance.classroom = validated_data['classroom']
+
+    def create(self, validated_data):
+        group = Group.create_new_group(
+            code=validated_data['code'],
+            subject_name=validated_data['subject_name'],
+            number=validated_data['number'],
+            teacher=validated_data['teacher'],
+            classroom=validated_data['classroom']
+        )
+        group.save()
 
 class TeacherScheduleSerializer(serializers.ModelSerializer):
 

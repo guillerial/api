@@ -47,7 +47,7 @@ def permission_class(profile_list):
 
         def has_permission(self, request, view):
             for profile in profile_list:
-                if profile in request.user._profiles:
+                if profile.objects.filter(email=request.user.username).count() > 0:
                     return True
 
             return False

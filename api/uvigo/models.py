@@ -10,6 +10,10 @@ class UvigoUser(models.Model):
     email = models.EmailField(unique=True, default=None, blank=True, null=True)
     password = models.CharField(max_length=100, default=None, blank=True, null=True)
 
+    ADMIN = 1
+    TEACHER = 2
+    STUDENT = 3
+
     def __str__(self):
         return self.name
 
@@ -89,6 +93,10 @@ class Group(models.Model):
 
     class Meta:
         db_table = 'groups'
+
+    @classmethod
+    def create_new_group(cls, code, subject_name, number, teacher=None, classroom=None):
+        return cls(code=code, subject_name=subject_name, number=number, teacher=teacher, classroom=classroom)
 
 
 class Schedule(models.Model):
