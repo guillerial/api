@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule
-from . import serializers
+from . import serializers, permissions
 
 # Create your views here.
 
@@ -185,7 +185,7 @@ class SchedulesView(APIView):
     """
     Returns schedules
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, permissions.IsStudent)
 
     def get(self, request):
         user = Student.objects.get(email=request.user.username)

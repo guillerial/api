@@ -5,7 +5,7 @@ from django.db import models
 # Create your models here.
 
 
-class User(models.Model):
+class UvigoUser(models.Model):
     name = models.CharField(max_length=40)
     email = models.EmailField(unique=True, default=None, blank=True, null=True)
     password = models.CharField(max_length=100, default=None, blank=True, null=True)
@@ -17,7 +17,7 @@ class User(models.Model):
         abstract = True
 
 
-class Student(User):
+class Student(UvigoUser):
     class Meta:
         db_table = 'students'
 
@@ -38,11 +38,17 @@ class Student(User):
         return check_password(plain_password, self.password)
 
 
-class Teacher(User):
+class Teacher(UvigoUser):
     office = models.CharField(max_length=5)
 
     class Meta:
         db_table = 'teachers'
+
+
+class Admin(UvigoUser):
+
+    class Meta:
+        db_table = 'admins'
 
 
 class Classroom(models.Model):
