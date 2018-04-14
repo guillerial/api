@@ -32,7 +32,8 @@ class EmailSerializer(serializers.Serializer):
 
 
 class GroupViewSerializer(serializers.Serializer):
-    email = serializers.CharField(required=False)
+    id = serializers.IntegerField(required=False)
+    type = serializers.IntegerField(required=False)
     subject = serializers.CharField(required=False)
 
 

@@ -362,15 +362,14 @@ class GroupsView(APIView):
         if serializer.is_valid(raise_exception=True):
             if user_type == UvigoUser.ADMIN:
 
-                if 'email' in serializer.data.keys():
-                    request_user, request_user_type = Utils.check_user_and_type(serializer.data['email'])
-                    if request_user_type == UvigoUser.TEACHER:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=request_user.id), many=True),
+                if 'id' in serializer.data.keys():
+                    if serializer.data['type'] == UvigoUser.TEACHER:
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.data['id']), many=True),
                                         status=status.HTTP_200_OK)
-                    if request_user_type == UvigoUser.STUDENT:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=request_user.id), many=True),
+                    if serializer.data['type'] == UvigoUser.STUDENT:
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.data['id']), many=True),
                                         status=status.HTTP_200_OK)
-                    return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(data={"detail": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
                 elif 'subject' in serializer.data.keys():
                     groups = Group.objects.filter(subject_name=serializer.data['subject'])
@@ -380,16 +379,15 @@ class GroupsView(APIView):
                                                         many=True),
                             status=status.HTTP_200_OK)
                 else:
-                    return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(data={"detail": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(data={"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
-
-        elif user_type == UvigoUser.TEACHER:
-            groups = Group.objects.filter(teacher__id=user.id)
-            return Response(
-                serializers.GroupSerializer(instance=groups,
-                                            many=True),
-                status=status.HTTP_200_OK)
+            elif user_type == UvigoUser.TEACHER:
+                groups = Group.objects.filter(teacher__id=user.id)
+                return Response(
+                    serializers.GroupSerializer(instance=groups,
+                                                many=True),
+                    status=status.HTTP_200_OK)
+            return Response(data={"detail": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
         serializer = serializers.ModifyGroupSerializer(data=request.data)
