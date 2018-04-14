@@ -32,4 +32,5 @@ urlpatterns = [
     path('teachers/register/', uvigo.views.teacher_register, name='teachers-registration'),
     path('admins/register/', uvigo.views.admin_register, name='admins-registration'),
     path('users-list/', uvigo.views.users_list, name='users-list'),
+    path('groups/', uvigo.views.groups, name='groups'),
 ]
