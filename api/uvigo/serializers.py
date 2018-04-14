@@ -15,6 +15,16 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 
+class UserSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    email = serializers.CharField()
+
+
+class UserByTypeSerializer(serializers.Serializer):
+    students = UserSerializer(many=True)
+    teachers = UserSerializer(many=True)
+
+
 class TeacherScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -225,7 +225,15 @@ class ProfileView(APIView):
             user = Student.objects.get(email=request.user.username)
             return Response(data=serializers.ProfileSerializer(instance=user).data, status=status.HTTP_200_OK)
         except Student.DoesNotExist:
-            return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                user = Teacher.objects.get(email=request.user.username)
+                return Response(data=serializers.TeacherSerializer(instance=user).data, status=status.HTTP_200_OK)
+            except Teacher.DoesNotExist:
+                try:
+                    user = Admin.objects.get(email=request.user.username)
+                    return Response(data=serializers.UserSerializer(instance=user).data, status=status.HTTP_200_OK)
+                except Admin.DoesNotExist:
+                    return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 user_profile = ProfileView.as_view()
@@ -306,3 +314,23 @@ class SchedulesView(APIView):
 
 
 schedules = SchedulesView.as_view()
+
+
+class UsersListView(APIView):
+    """
+    Returns schedules
+    """
+    permission_classes = (IsAuthenticated, permissions.IsAdmin)
+
+    def get(self, request):
+
+        class AuxObject:
+            students = Student.objects.all()
+            teachers = Teacher.objects.all()
+
+        aux = AuxObject()
+
+        return Response(data=serializers.UserByTypeSerializer(instance=aux).data, status=status.HTTP_200_OK)
+
+
+users_list = UsersListView.as_view()
