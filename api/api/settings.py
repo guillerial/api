@@ -139,7 +139,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
 
-
+FIREBASE_API_KEY = "AAAAXZ0qyB0:APA91bGjEj8l5M60J_bpzNDW8EVU1cYH-tR4o4L2z2lINOVfJ9N9oYymO3Z0s3RRS7MbKKZjKfTiN7quaek5th30TFApzPr8vRBotO9SzXwS_GxhP419iQIUs6eYfsVRYahAFFHpY_P-"
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 

@@ -60,6 +60,12 @@ class ModifyGroupSerializer(serializers.Serializer):
         )
         group.save()
 
+
+class FCMSerializer(serializers.Serializer):
+    body = serializers.CharField(max_length=255)
+    title = serializers.CharField(max_length=255, required=False)
+
+
 class TeacherScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:

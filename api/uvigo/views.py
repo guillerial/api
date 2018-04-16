@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from pyfcm import FCMNotification
+from pyfcm.errors import FCMError
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,6 +12,7 @@ from rest_framework.reverse import reverse
 from .models import Student, Group, Topology, Indications, Classroom, Teacher, Schedule, Admin, UvigoUser, TeacherSchedule
 from . import serializers, permissions
 from .utils import Utils
+from api import settings
 
 # Create your views here.
 
@@ -402,4 +405,55 @@ class GroupsView(APIView):
             serializer.create(serializer.validated_data)
             return Response(status=status.HTTP_201_CREATED)
 
+
 groups = GroupsView.as_view()
+
+
+class FCMInstanceView(APIView):
+    push_service = FCMNotification(api_key=settings.FIREBASE_API_KEY)
+
+    permission_classes = (IsAuthenticated, permissions.IsStudent)
+
+    def post(self, request):
+
+        firebase_token = request.data['firebase_token']
+
+        user, user_type = Utils.check_user_and_type(request.user.username)
+
+        if user.firebase_token is not None:
+            self.push_service.unsubscribe_registration_ids_from_topic([user.firebase_token, ], 'markn')
+
+        user.firebase_token = firebase_token
+
+        user.save()
+
+        self.push_service.subscribe_registration_ids_to_topic([firebase_token, ], 'markn')
+
+        return Response(status=status.HTTP_200_OK)
+
+
+firebase_token = FCMInstanceView.as_view()
+
+
+class FCMView(APIView):
+    push_service = FCMNotification(api_key=settings.FIREBASE_API_KEY)
+    serializer_class = serializers.FCMSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            message_title = None
+
+            if "title" in serializer.validated_data.keys():
+                message_title = serializer.validated_data['title']
+
+            self.push_service.notify_topic_subscribers(topic_name="markn",
+                                                       message_body=serializer.validated_data['body'],
+                                                       message_title=message_title)
+
+            return Response(data={'detail': 'Notification sent'}, status=status.HTTP_200_OK)
+
+
+firebase = FCMView.as_view()

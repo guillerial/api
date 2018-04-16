@@ -25,6 +25,8 @@ class UvigoUser(models.Model):
 
 
 class Student(UvigoUser):
+    firebase_token = models.CharField(max_length=255, default=None, blank=True, null=True)
+
     class Meta:
         db_table = 'students'
 
