@@ -97,10 +97,16 @@ class ClassroomSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     teacher = TeacherSerializer()
     classroom = ClassroomSerializer()
+    schedule = serializers.SerializerMethodField(default=None)
 
     class Meta:
         model = Group
-        fields = ('code', 'number', 'subject_name', 'teacher', 'classroom')
+        fields = ('code', 'number', 'subject_name', 'teacher', 'classroom', 'schedule')
+
+    def get_schedule(self, obj):
+        """obj is a Group instance. Returns list of dicts"""
+        groups = Schedule.objects.filter(group_id=obj.id)
+        return [GroupSerializer(group).data for group in groups]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
