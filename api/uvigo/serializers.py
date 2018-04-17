@@ -63,7 +63,8 @@ class ModifyGroupSerializer(serializers.Serializer):
 
 class FCMSerializer(serializers.Serializer):
     body = serializers.CharField(max_length=255)
-    title = serializers.CharField(max_length=255, required=False)
+    title = serializers.CharField(max_length=255)
+    author = serializers.CharField(max_length=255)
 
 
 class TeacherScheduleSerializer(serializers.ModelSerializer):
