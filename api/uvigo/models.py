@@ -45,7 +45,7 @@ class Student(UvigoUser):
 
 
 class Teacher(UvigoUser):
-    office = models.CharField(max_length=5)
+    office = models.CharField(max_length=40)
 
     class Meta:
         db_table = 'teachers'
