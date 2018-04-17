@@ -366,10 +366,10 @@ class GroupsView(APIView):
 
                 if 'id' in serializer.validated_data.keys():
                     if serializer.validated_data['type'] == UvigoUser.TEACHER:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']), many=True).data,
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']).data, many=True).data,
                                         status=status.HTTP_200_OK)
                     if serializer.validated_data['type'] == UvigoUser.STUDENT:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']), many=True).data,
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']).data, many=True).data,
                                         status=status.HTTP_200_OK)
                     return Response(data={"detail": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -396,13 +396,13 @@ class GroupsView(APIView):
         if serializer.is_valid(raise_exception=True):
             group = Group.objects.get(serializer.data['code'])
             serializer.update(group, serializer.validated_data)
-            return Response(status=status.HTTP_200_OK)
+            return Response(data={"detail": "OK"}, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = serializers.ModifyGroupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.create(serializer.validated_data)
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(data={"detail": "OK"}, status=status.HTTP_201_CREATED)
 
 
 groups = GroupsView.as_view()
@@ -428,7 +428,7 @@ class FCMInstanceView(APIView):
 
         self.push_service.subscribe_registration_ids_to_topic([firebase_token, ], 'markn')
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(data={"detail": "Firebase instance sent"}, status=status.HTTP_200_OK)
 
 
 firebase_token = FCMInstanceView.as_view()
