@@ -385,8 +385,10 @@ class GroupsView(APIView):
                     return Response(data={"detail": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
             elif user_type == UvigoUser.TEACHER:
-                print("debug2")
+                print("debug2", user.id)
                 groups = Group.objects.filter(teacher__id=user.id)
+                for group in groups:
+                    print("Group:", group.code)
                 print("debug3")
                 return Response(
                     serializers.GroupSerializer(instance=groups,
