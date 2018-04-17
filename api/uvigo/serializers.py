@@ -105,7 +105,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def get_schedule(self, obj):
         """obj is a Group instance. Returns list of dicts"""
-        groups = Schedule.objects.filter(group_id=obj.id)
+        groups = Schedule.objects.filter(group_id=obj.code)
         return [GroupSerializer(group).data for group in groups]
 
 
