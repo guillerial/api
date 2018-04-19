@@ -184,7 +184,7 @@ class LoginView(APIView):
             if user.check_password(serializer.data['password']):
                 django_user = User.objects.get(username=serializer.data['email'])
                 token, create = Token.objects.get_or_create(user=django_user)
-                return Response(data={"token": token.key , "user_type": "student"}, status=status.HTTP_200_OK)
+                return Response(data={"token": token.key , "name": user.name, "user_type": "student"}, status=status.HTTP_200_OK)
             else:
                 return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -195,7 +195,7 @@ class LoginView(APIView):
                 if user.check_password(serializer.data['password']):
                     django_user = User.objects.get(username=serializer.data['email'])
                     token, create = Token.objects.get_or_create(user=django_user)
-                    return Response(data={"token": token.key, "user_type": "teacher"}, status=status.HTTP_200_OK)
+                    return Response(data={"token": token.key, "name": user.name, "user_type": "teacher"}, status=status.HTTP_200_OK)
                 else:
                     return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -206,7 +206,7 @@ class LoginView(APIView):
                     if user.check_password(serializer.data['password']):
                         django_user = User.objects.get(username=serializer.data['email'])
                         token, create = Token.objects.get_or_create(user=django_user)
-                        return Response(data={"token": token.key, "user_type": "admin"}, status=status.HTTP_200_OK)
+                        return Response(data={"token": token.key, "name": user.name, "user_type": "admin"}, status=status.HTTP_200_OK)
                     else:
                         return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
