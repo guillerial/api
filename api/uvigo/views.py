@@ -347,12 +347,14 @@ class SchedulesView(APIView):
             serializer = serializers.ModifyTeacherScheduleSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
                 try:
-                    Teacher.objects.get(teacherschedule=serializer.schedule)
-                    print("hola")
+                    if user.id == Teacher.objects.get(teacherschedule=serializer.schedule).id:
+                        schedule = serializer.update(instance=serializer.schedule, validated_data=serializer.validated_data)
+                        return Response(data=serializers.ModifyTeacherScheduleSerializer(instance=schedule).data)
+                    else:
+                        return Response(data={"detail": "Invalid schedule ID"}, status=status.HTTP_400_BAD_REQUEST)
+
                 except Teacher.DoesNotExist:
                     return Response(data={"detail": "Invalid schedule ID"}, status=status.HTTP_400_BAD_REQUEST)
-                schedule = serializer.update(instance=serializer.schedule, validated_data=serializer.validated_data)
-                return Response(data=serializers.ModifyTeacherScheduleSerializer(instance=schedule).data)
 
         else:
             return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
