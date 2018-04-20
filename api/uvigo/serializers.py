@@ -89,9 +89,9 @@ class ModifyTeacherScheduleSerializer(serializers.Serializer):
 
     def create(self, validated_data, teacher):
         schedule = TeacherSchedule.create_new(
-            day=validated_data['code'],
-            start_hour=validated_data['subject_name'],
-            finish_hour=validated_data['number'],
+            day=validated_data['day'],
+            start_hour=validated_data['start_hour'],
+            finish_hour=validated_data['finish_hour'],
             teacher_id=teacher.id,
         )
         schedule.save()
