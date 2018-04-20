@@ -63,7 +63,8 @@ class ModifyGroupSerializer(serializers.Serializer):
 
 class FCMSerializer(serializers.Serializer):
     body = serializers.CharField(max_length=255)
-    title = serializers.CharField(max_length=255, required=False)
+    title = serializers.CharField(max_length=255)
+    author = serializers.CharField(max_length=255)
 
 
 class TeacherScheduleSerializer(serializers.ModelSerializer):
@@ -92,14 +93,25 @@ class ClassroomSerializer(serializers.ModelSerializer):
         model = Classroom
         fields = ('id', 'name',)
 
+class ScheduleWithoutGroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Schedule
+        fields = ('id', 'day', 'start_hour', 'finish_hour')
 
 class GroupSerializer(serializers.ModelSerializer):
     teacher = TeacherSerializer()
     classroom = ClassroomSerializer()
+    schedule = serializers.SerializerMethodField(default=None)
 
     class Meta:
         model = Group
-        fields = ('code', 'number', 'subject_name', 'teacher', 'classroom')
+        fields = ('code', 'number', 'subject_name', 'teacher', 'classroom', 'schedule')
+
+    def get_schedule(self, obj):
+        """obj is a Group instance. Returns list of dicts"""
+        schedules = Schedule.objects.filter(group_id=obj.code)
+        return [ScheduleWithoutGroupSerializer(schedule).data for schedule in schedules]
 
 
 class ProfileSerializer(serializers.ModelSerializer):

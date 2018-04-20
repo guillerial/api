@@ -184,7 +184,7 @@ class LoginView(APIView):
             if user.check_password(serializer.data['password']):
                 django_user = User.objects.get(username=serializer.data['email'])
                 token, create = Token.objects.get_or_create(user=django_user)
-                return Response(data={"token": token.key}, status=status.HTTP_200_OK)
+                return Response(data={"token": token.key , "name": user.name, "user_type": "student"}, status=status.HTTP_200_OK)
             else:
                 return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -195,7 +195,7 @@ class LoginView(APIView):
                 if user.check_password(serializer.data['password']):
                     django_user = User.objects.get(username=serializer.data['email'])
                     token, create = Token.objects.get_or_create(user=django_user)
-                    return Response(data={"token": token.key}, status=status.HTTP_200_OK)
+                    return Response(data={"token": token.key, "name": user.name, "user_type": "teacher"}, status=status.HTTP_200_OK)
                 else:
                     return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -206,7 +206,7 @@ class LoginView(APIView):
                     if user.check_password(serializer.data['password']):
                         django_user = User.objects.get(username=serializer.data['email'])
                         token, create = Token.objects.get_or_create(user=django_user)
-                        return Response(data={"token": token.key}, status=status.HTTP_200_OK)
+                        return Response(data={"token": token.key, "name": user.name, "user_type": "admin"}, status=status.HTTP_200_OK)
                     else:
                         return Response(data={"detail": "wrong password"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -361,16 +361,15 @@ class GroupsView(APIView):
     def get(self, request):
         serializer = serializers.GroupViewSerializer(data=request.GET)
         user, user_type = Utils.check_user_and_type(request.user.username)
-
         if serializer.is_valid(raise_exception=True):
             if user_type == UvigoUser.ADMIN:
 
                 if 'id' in serializer.validated_data.keys():
                     if serializer.validated_data['type'] == UvigoUser.TEACHER:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']), many=True).data,
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(teacher__id=serializer.validated_data['id']).data, many=True).data,
                                         status=status.HTTP_200_OK)
                     if serializer.validated_data['type'] == UvigoUser.STUDENT:
-                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']), many=True).data,
+                        return Response(serializers.GroupSerializer(instance=Group.objects.filter(students__id=serializer.validated_data['id']).data, many=True).data,
                                         status=status.HTTP_200_OK)
                     return Response(data={"detail": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -388,7 +387,7 @@ class GroupsView(APIView):
                 groups = Group.objects.filter(teacher__id=user.id)
                 return Response(
                     serializers.GroupSerializer(instance=groups,
-                                                many=True),
+                                                many=True).data,
                     status=status.HTTP_200_OK)
             return Response(data={"detail": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -397,13 +396,13 @@ class GroupsView(APIView):
         if serializer.is_valid(raise_exception=True):
             group = Group.objects.get(serializer.data['code'])
             serializer.update(group, serializer.validated_data)
-            return Response(status=status.HTTP_200_OK)
+            return Response(data={"detail": "OK"}, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = serializers.ModifyGroupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.create(serializer.validated_data)
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(data={"detail": "OK"}, status=status.HTTP_201_CREATED)
 
 
 groups = GroupsView.as_view()
@@ -429,7 +428,7 @@ class FCMInstanceView(APIView):
 
         self.push_service.subscribe_registration_ids_to_topic([firebase_token, ], 'markn')
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(data={"detail": "Firebase instance sent"}, status=status.HTTP_200_OK)
 
 
 firebase_token = FCMInstanceView.as_view()
@@ -446,12 +445,15 @@ class FCMView(APIView):
         if serializer.is_valid(raise_exception=True):
             message_title = None
 
+            data_message = {'author': serializer.validated_data['author']}
+
             if "title" in serializer.validated_data.keys():
                 message_title = serializer.validated_data['title']
 
             self.push_service.notify_topic_subscribers(topic_name="markn",
                                                        message_body=serializer.validated_data['body'],
-                                                       message_title=message_title)
+                                                       message_title=message_title,
+                                                       data_message=data_message)
 
             return Response(data={'detail': 'Notification sent'}, status=status.HTTP_200_OK)
 

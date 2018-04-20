@@ -45,7 +45,7 @@ class Student(UvigoUser):
 
 
 class Teacher(UvigoUser):
-    office = models.CharField(max_length=5)
+    office = models.CharField(max_length=40)
 
     class Meta:
         db_table = 'teachers'
@@ -70,7 +70,7 @@ class Admin(UvigoUser):
 
 
 class Classroom(models.Model):
-    name = models.CharField(blank=False, max_length=5)
+    name = models.CharField(blank=False, max_length=40)
     nearby_beacon = models.CharField(max_length=20, null=True)
     last_indication = models.CharField(max_length=255, null=True)
     last_image = models.CharField(max_length=255, null=True)
