@@ -154,3 +154,10 @@ class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
         fields = ('id', 'day', 'start_hour', 'finish_hour', 'group')
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = 'subject_name'

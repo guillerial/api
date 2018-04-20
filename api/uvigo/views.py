@@ -465,9 +465,8 @@ class Subjects(APIView):
     permission_classes = (IsAuthenticated, permissions.IsAdmin)
 
     def get(self, request):
-        for g in Group.objects.raw('SELECT * FROM groups group by groups.subject_name'):
-            print(g.subject_name)
-        return Response()
+        distinct_subjects = Group.objects.raw('SELECT * FROM groups group by groups.subject_name')
+        return Response(data=serializers.SubjectSerializer(instance=distinct_subjects, many=True).data)
 
 
 subjects = Subjects.as_view()
