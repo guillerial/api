@@ -35,4 +35,5 @@ urlpatterns = [
     path('groups/', uvigo.views.groups, name='groups'),
     path('firebase-notification/', uvigo.views.firebase, name='firebase-notification'),
     path('firebase-instance/', uvigo.views.firebase_token, name='firebase-instance'),
+    path('subjects/', uvigo.views.subjects, name='subjects'),
 ]

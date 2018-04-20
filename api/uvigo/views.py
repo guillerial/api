@@ -457,3 +457,15 @@ class FCMView(APIView):
 
 
 firebase = FCMView.as_view()
+
+
+class Subjects(APIView):
+    permission_classes = (IsAuthenticated, permissions.IsAdmin)
+
+    def get(self, request):
+        for g in Group.objects.raw('SELECT *, COUNT(DISTINCT subject_name) FROM groups'):
+            print(g.subject_name)
+        return Response()
+
+
+subjects = Subjects.as_view()
