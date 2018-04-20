@@ -160,4 +160,4 @@ class SubjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = 'subject_name'
+        fields = ('subject_name', )
