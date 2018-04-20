@@ -346,6 +346,11 @@ class SchedulesView(APIView):
         if user_type == UvigoUser.TEACHER:
             serializer = serializers.ModifyTeacherScheduleSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
+                try:
+                    Teacher.objects.get(schedule__id=serializer.validated_data['id'])
+                    print("hola")
+                except Teacher.DoesNotExist:
+                    return Response(data={"detail": "Invalid schedule ID"}, status=status.HTTP_400_BAD_REQUEST)
                 schedule = serializer.update(instance=serializer.schedule, validated_data=serializer.validated_data)
                 return Response(data=serializers.ModifyTeacherScheduleSerializer(instance=schedule).data)
 
