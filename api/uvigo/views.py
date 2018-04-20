@@ -328,6 +328,30 @@ class SchedulesView(APIView):
         else:
             return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
+    def post(self, request):
+
+        user, user_type = Utils.check_user_and_type(request.user.username)
+        if user_type == UvigoUser.TEACHER:
+            serializer = serializers.ModifyTeacherScheduleSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                schedule = serializer.create(validated_data=serializer.validated_data, teacher=user)
+                return Response(data=serializers.ModifyTeacherScheduleSerializer(instance=schedule).data)
+
+        else:
+            return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+
+        user, user_type = Utils.check_user_and_type(request.user.username)
+        if user_type == UvigoUser.TEACHER:
+            serializer = serializers.ModifyTeacherScheduleSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                schedule = serializer.update(instance=serializer.schedule, validated_data=serializer.validated_data)
+                return Response(data=serializers.ModifyTeacherScheduleSerializer(instance=schedule).data)
+
+        else:
+            return Response(data={"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 schedules = SchedulesView.as_view()
 

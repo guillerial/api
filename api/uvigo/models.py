@@ -138,3 +138,7 @@ class TeacherSchedule(models.Model):
 
     class Meta:
         db_table = 'teacher_schedules'
+
+    @classmethod
+    def create_new(cls, day, start_hour, finish_hour, teacher):
+        return cls(day=day, start_hour=start_hour, finish_hour=finish_hour, teacher_id=teacher)

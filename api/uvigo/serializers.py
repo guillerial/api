@@ -61,6 +61,43 @@ class ModifyGroupSerializer(serializers.Serializer):
         group.save()
 
 
+class ModifyTeacherScheduleSerializer(serializers.Serializer):
+    id = serializers.IntegerField(default=None)
+    day = serializers.IntegerField()
+    start_hour = serializers.IntegerField()
+    finish_hour = serializers.IntegerField()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.schedule = None
+
+
+    def validate_id(self, value):
+        if value is not None:
+            try:
+                self.schedule = TeacherSchedule.objects.get(id=value)
+            except TeacherSchedule.DoesNotExist:
+                raise ValidationError(detail={"detail": "ID de horario no existe"})
+
+
+    def update(self, instance, validated_data):
+        instance.day = validated_data['day']
+        instance.start_hour = validated_data['start_hour']
+        instance.finish_hour = validated_data['finish_hour']
+        instance.save()
+        return instance
+
+    def create(self, validated_data, teacher):
+        schedule = TeacherSchedule.create_new(
+            day=validated_data['code'],
+            start_hour=validated_data['subject_name'],
+            finish_hour=validated_data['number'],
+            teacher_id=teacher.id,
+        )
+        schedule.save()
+        return schedule
+
+
 class FCMSerializer(serializers.Serializer):
     body = serializers.CharField(max_length=255)
     title = serializers.CharField(max_length=255)
