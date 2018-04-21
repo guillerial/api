@@ -476,14 +476,11 @@ class FCMView(APIView):
         if serializer.is_valid(raise_exception=True):
             message_title = None
 
-            data_message = {'author': serializer.validated_data['author']}
-
-            if "title" in serializer.validated_data.keys():
-                message_title = serializer.validated_data['title']
+            data_message = {'author': serializer.validated_data['author'],
+                            'title': serializer.validated_data['title'],
+                            'body': serializer.validated_data['body']}
 
             self.push_service.notify_topic_subscribers(topic_name="markn",
-                                                       message_body=serializer.validated_data['body'],
-                                                       message_title=message_title,
                                                        data_message=data_message)
 
             return Response(data={'detail': 'Notification sent'}, status=status.HTTP_200_OK)
