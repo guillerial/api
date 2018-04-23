@@ -37,6 +37,12 @@ class GroupViewSerializer(serializers.Serializer):
     subject = serializers.CharField(required=False)
 
 
+class ModifyPasswordSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    type = serializers.IntegerField()
+    new_password = serializers.CharField()
+
+
 class ModifyGroupSerializer(serializers.Serializer):
     code = serializers.CharField()
     subject_name = serializers.CharField()

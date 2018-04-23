@@ -23,6 +23,11 @@ class UvigoUser(models.Model):
     def check_password(self, plain_password):
         return check_password(plain_password, self.password)
 
+    def assign_password(self, plain_password):
+        hashed_password = make_password(password, salt='markn', hasher='md5')
+        self.password = hashed_password
+        return self
+
 
 class Student(UvigoUser):
     firebase_token = models.CharField(max_length=255, default=None, blank=True, null=True)
