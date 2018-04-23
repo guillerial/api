@@ -47,8 +47,10 @@ class ModifyGroupSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.subject_name = validated_data['subject_name']
         instance.number = validated_data['number']
-        instance.teacher_id = validated_data['teacher']
-        instance.classroom = validated_data['classroom']
+        if 'teacher' in validated_data.keys():
+            instance.teacher_id = validated_data['teacher']
+        if 'classroom' in validated_data.keys():
+            instance.classroom_id = validated_data['classroom']
 
     def create(self, validated_data):
         group = Group.create_new_group(
@@ -56,7 +58,7 @@ class ModifyGroupSerializer(serializers.Serializer):
             subject_name=validated_data['subject_name'],
             number=validated_data['number'],
             teacher_id=validated_data['teacher'],
-            classroom=validated_data['classroom']
+            classroom_id=validated_data['classroom']
         )
         group.save()
 
