@@ -241,25 +241,29 @@ class ProfileView(APIView):
 
     def put(self, request):
         user, user_type = Utils.check_user_and_type(request.user.username)
-        if user_type == UvigoUser.ADMIN:
-            serializer = serializers.ModifyPasswordSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-
+        serializer = serializers.ModifyPasswordSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            if user_type == UvigoUser.ADMIN:
                 if serializer.validated_data['type'] == UvigoUser.TEACHER:
-                    user = Teacher.objects.get(id=serializer.validated_data['id'])
-                    user.assign_password(serializer.validated_data['new_password'])
-                    user.save()
+                    aux = Teacher.objects.get(id=serializer.validated_data['id'])
+                    aux.assign_password(serializer.validated_data['new_password'])
+                    aux.save()
 
-                    return Response(data=serializers.UserSerializer(instance=user).data, status=status.HTTP_200_OK)
+                    return Response(data=serializers.UserSerializer(instance=aux).data, status=status.HTTP_200_OK)
 
                 if serializer.validated_data['type'] == UvigoUser.STUDENT:
-                    user = Student.objects.get(id=serializer.validated_data['id'])
-                    user.assign_password(serializer.validated_data['new_password'])
-                    user.save()
+                    aux = Student.objects.get(id=serializer.validated_data['id'])
+                    aux.assign_password(serializer.validated_data['new_password'])
+                    aux.save()
 
-                    return Response(data=serializers.UserSerializer(instance=user).data, status=status.HTTP_200_OK)
+                    return Response(data=serializers.UserSerializer(instance=aux).data, status=status.HTTP_200_OK)
 
                 return Response(data={"detail": "Wrong type"}, status=status.HTTP_400_BAD_REQUEST)
+            if user_type == UvigoUser.TEACHER:
+                user.assign_password(serializer.validated_data['new_password'])
+                user.save()
+
+                return Response(data=serializers.UserSerializer(instance=user).data, status=status.HTTP_200_OK)
 
 
 user_profile = ProfileView.as_view()

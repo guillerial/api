@@ -38,8 +38,8 @@ class GroupViewSerializer(serializers.Serializer):
 
 
 class ModifyPasswordSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    type = serializers.IntegerField()
+    id = serializers.IntegerField(required=False)
+    type = serializers.IntegerField(required=False)
     new_password = serializers.CharField()
 
 
