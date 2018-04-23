@@ -104,8 +104,8 @@ class Group(models.Model):
         db_table = 'groups'
 
     @classmethod
-    def create_new_group(cls, code, subject_name, number, teacher=None, classroom=None):
-        return cls(code=code, subject_name=subject_name, number=number, teacher=teacher, classroom=classroom)
+    def create_new_group(cls, code, subject_name, number, teacher_id=None, classroom_id=None):
+        return cls(code=code, subject_name=subject_name, number=number, teacher_id=teacher_id, classroom_id=classroom_id)
 
 
 class Schedule(models.Model):
