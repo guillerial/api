@@ -55,6 +55,13 @@ class Teacher(UvigoUser):
         hashed_password = make_password(password, salt='markn', hasher='md5')
 
         return cls(name=name, email=email, password=hashed_password)
+    
+    def assign_email_and_password(self, email, password):
+        hashed_password = make_password(password, salt='markn', hasher='md5')
+        self.email = email
+        self.password = hashed_password
+
+        return self
 
 
 class Admin(UvigoUser):
