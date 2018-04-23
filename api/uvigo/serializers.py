@@ -51,6 +51,7 @@ class ModifyGroupSerializer(serializers.Serializer):
             instance.teacher_id = validated_data['teacher']
         if 'classroom' in validated_data.keys():
             instance.classroom_id = validated_data['classroom']
+        instance.save()
 
     def create(self, validated_data):
         group = Group.create_new_group(
