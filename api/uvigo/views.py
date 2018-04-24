@@ -451,7 +451,7 @@ class GroupsView(APIView):
     def put(self, request):
         serializer = serializers.ModifyGroupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            group = Group.objects.get(code=serializer.validated_data['code'])
+            group = Group.objects.get(code=serializer.validated_data['old_code'])
             serializer.update(group, serializer.validated_data)
             return Response(data={"detail": "OK"}, status=status.HTTP_200_OK)
 
