@@ -47,12 +47,15 @@ class ModifyGroupSerializer(serializers.Serializer):
     code = serializers.CharField()
     subject_name = serializers.CharField()
     number = serializers.IntegerField()
+    old_code = serializers.CharField(required=False, default=None)
     teacher = serializers.IntegerField(required=False, default=None)
     classroom = serializers.IntegerField(required=False, default=None)
 
     def update(self, instance, validated_data):
         instance.subject_name = validated_data['subject_name']
         instance.number = validated_data['number']
+        instance.code = validated_data['code']
+
         if 'teacher' in validated_data.keys() and validated_data['teacher'] is not None:
             instance.teacher_id = validated_data['teacher']
         if 'classroom' in validated_data.keys() and validated_data['classroom'] is not None:
