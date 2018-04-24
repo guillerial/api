@@ -24,7 +24,7 @@ class UvigoUser(models.Model):
         return check_password(plain_password, self.password)
 
     def assign_password(self, plain_password):
-        hashed_password = make_password(password, salt='markn', hasher='md5')
+        hashed_password = make_password(plain_password, salt='markn', hasher='md5')
         self.password = hashed_password
         return self
 
