@@ -60,7 +60,6 @@ class ModifyGroupSerializer(serializers.Serializer):
             instance.teacher_id = validated_data['teacher']
         if 'classroom' in validated_data.keys() and validated_data['classroom'] is not None:
             instance.classroom_id = validated_data['classroom']
-        instance.save()
         return instance
 
     def create(self, validated_data):
