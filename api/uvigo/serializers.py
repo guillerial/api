@@ -47,15 +47,15 @@ class ModifyGroupSerializer(serializers.Serializer):
     code = serializers.CharField()
     subject_name = serializers.CharField()
     number = serializers.IntegerField()
-    teacher = serializers.IntegerField(required=False)
-    classroom = serializers.IntegerField(required=False)
+    teacher = serializers.IntegerField(required=False, default=None)
+    classroom = serializers.IntegerField(required=False, default=None)
 
     def update(self, instance, validated_data):
         instance.subject_name = validated_data['subject_name']
         instance.number = validated_data['number']
-        if 'teacher' in validated_data.keys():
+        if 'teacher' in validated_data.keys() and validated_data['teacher'] is not None:
             instance.teacher_id = validated_data['teacher']
-        if 'classroom' in validated_data.keys():
+        if 'classroom' in validated_data.keys() and validated_data['classroom'] is not None:
             instance.classroom_id = validated_data['classroom']
         instance.save()
         return instance
@@ -82,14 +82,12 @@ class ModifyTeacherScheduleSerializer(serializers.Serializer):
         super().__init__(**kwargs)
         self.schedule = None
 
-
     def validate_id(self, value):
         if value is not None:
             try:
                 self.schedule = TeacherSchedule.objects.get(id=value)
             except TeacherSchedule.DoesNotExist:
                 raise ValidationError(detail={"detail": "ID de horario no existe"})
-
 
     def update(self, instance, validated_data):
         instance.day = validated_data['day']
@@ -116,7 +114,6 @@ class FCMSerializer(serializers.Serializer):
 
 
 class TeacherScheduleSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = TeacherSchedule
         fields = '__all__'
@@ -136,16 +133,16 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class ClassroomSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Classroom
         fields = ('id', 'name',)
 
-class ScheduleWithoutGroupSerializer(serializers.ModelSerializer):
 
+class ScheduleWithoutGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
         fields = ('id', 'day', 'start_hour', 'finish_hour')
+
 
 class GroupSerializer(serializers.ModelSerializer):
     teacher = TeacherSerializer()
@@ -176,21 +173,18 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class TopologySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Topology
         fields = '__all__'
 
 
 class IndicationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Indications
         fields = '__all__'
 
 
 class FullClassroomSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Classroom
         fields = '__all__'
@@ -205,7 +199,6 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Group
-        fields = ('subject_name', )
+        fields = ('subject_name',)

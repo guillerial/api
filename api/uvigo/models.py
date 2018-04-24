@@ -98,8 +98,8 @@ class Group(models.Model):
     code = models.CharField(max_length=20, primary_key=True)
     subject_name = models.CharField(max_length=20)
     number = models.IntegerField(default=None, blank=True, null=True)
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True, default=None)
-    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, default=None)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True, default=None, blank=True)
+    classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, null=True, default=None, blank=True)
     students = models.ManyToManyField(Student)
 
     def __str__(self):
